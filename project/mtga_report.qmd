@@ -17,7 +17,7 @@ library(kableExtra)
 
 The purpose of this project is utilize monte carlo simulations of opening Magic the Gathering packs to determine: 1) the best methodology for earning cards, and 2) the effectiveness of spending money.[^1]
 
-[^1]: All code can be found in the github repository here:
+[^1]: All code can be found in the github repository here: <https://github.com/leona5139/mtg-monte-carlo>
 
 Traditionally, MTG is played in paper where cards are opened in physical packs and are purchased with real world money; however, competitive decks often cost hundred if not thousands of dollars. MTG can also be played online through different clients, such as Magic the Gathering Online (which has its own digital economy that mirrors the physical card game in most ways) and Magic the Gathering Arena (which follows a more traditional video game progression structure where gold can be earned through playing games and completing quests to then open packs of cards). Of the two online platforms, Magic the Gathering Arena is much friendlier for a smaller (or even free) budget so it will be the primary focus of these simulations.
 
