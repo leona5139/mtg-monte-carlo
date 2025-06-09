@@ -1,0 +1,8 @@
+.venv/
+project/data/logs/
+project/data/results/
+/.RData
+/.Rhistory
+/mtga.Rproj
+.Rproj.user/
+

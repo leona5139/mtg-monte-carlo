@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.42">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Leona Pierce">
+
+<title>How Should You Spend Your Gold (and Money) on MTG Arena?</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="mtga_report_files/libs/clipboard/clipboard.min.js"></script>
+<script src="mtga_report_files/libs/quarto-html/quarto.js"></script>
+<script src="mtga_report_files/libs/quarto-html/popper.min.js"></script>
+<script src="mtga_report_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="mtga_report_files/libs/quarto-html/anchor.min.js"></script>
+<link href="mtga_report_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="mtga_report_files/libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="mtga_report_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="mtga_report_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="mtga_report_files/libs/bootstrap/bootstrap-1bc8a17f135ab3d594c857e9f48e611b.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="mtga_report_files/libs/kePrint-0.0.1/kePrint.js"></script>
+
+<link href="mtga_report_files/libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">How Should You Spend Your Gold (and Money) on MTG Arena?</h1>
+<p class="subtitle lead">An MTG Arena Monte Carlo Analysis</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Leona Pierce </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p>The purpose of this project is utilize monte carlo simulations of opening Magic the Gathering packs to determine: 1) the best methodology for earning cards, and 2) the effectiveness of spending money.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
+<p>Traditionally, MTG is played in paper where cards are opened in physical packs and are purchased with real world money; however, competitive decks often cost hundred if not thousands of dollars. MTG can also be played online through different clients, such as Magic the Gathering Online (which has its own digital economy that mirrors the physical card game in most ways) and Magic the Gathering Arena (which follows a more traditional video game progression structure where gold can be earned through playing games and completing quests to then open packs of cards). Of the two online platforms, Magic the Gathering Arena is much friendlier for a smaller (or even free) budget so it will be the primary focus of these simulations.</p>
+</section>
+<section id="methodology" class="level2">
+<h2 class="anchored" data-anchor-id="methodology">Methodology</h2>
+<section id="player-profiles" class="level3">
+<h3 class="anchored" data-anchor-id="player-profiles">Player Profiles</h3>
+<p>The simulation consisted of a total of 1200 players that were sorted into 24 different profiles for 50 players each. The 24 profiles consisted of all possible combinations across the 4 following attributes:</p>
+<ul>
+<li><p>Format</p>
+<ul>
+<li><p>Standard: Card pool of legal cards is smaller and consist of approximately the last 3 years worth of sets</p></li>
+<li><p>Pioneer: Card pool of legal cards is larger and consist of all regular core sets and expansions since Return to Ravnica (released in 2012)</p></li>
+</ul></li>
+<li><p>Best of:</p>
+<ul>
+<li><p>Best of 1: Decks typically consist of only a 60 card main board</p></li>
+<li><p>Best of 3: Decks typically consist of a 60 card main board plus a 15 card sideboard for a total of 75 cards per deck</p></li>
+</ul></li>
+<li><p>Pack type:</p>
+<ul>
+<li><p>Normal pack: Typical rewards structure of magic the gathering packs of 8 cards from a specific set where 5 are commons, 2 are uncommon, and 1 is rare but could be upgraded to a mythic</p></li>
+<li><p>Mythic pack: A more expensive pack that follows the same rewards structure as the normal pack for commons and uncommons, but the final card is guaranteed to be a mythic</p></li>
+</ul></li>
+<li><p>Budget:</p>
+<ul>
+<li><p>Free to play: No money is spent (default starting conditions)</p></li>
+<li><p>$5: The “Welcome Bundle” is purchased which adds 2500 gems (the premium currency) and 5 Foundations packs to the starting conditions</p></li>
+<li><p>$15: The “Adventurer Bundle” is purchased which adds 3500 gems to the starting conditions</p></li>
+</ul></li>
+</ul>
+</section>
+<section id="initial-conditions" class="level3">
+<h3 class="anchored" data-anchor-id="initial-conditions">Initial Conditions</h3>
+<p>When each player was instantiated they started with 2000 gold, a basic set of cards that is universal, and the 63 free packs that are given to all players. Since the rewards from the 63 packs are randomly selected, this meant that each player started with a unique position as far as cards, but the same position as far as currency.</p>
+</section>
+<section id="the-loop" class="level3">
+<h3 class="anchored" data-anchor-id="the-loop">The Loop</h3>
+<p>The simulations consisted of repeatedly looping through a set of daily actions that simulate how a player would play each day. The actions are outlined below:</p>
+<ol type="1">
+<li><p>The player completes their daily quest, which can either be 500 gold (with a 75% chance) or 750 gold (with a 25% chance). If the daily quest is only 500 gold, they will try to reroll once for a 750 gold quest; otherwise, they will just collect the gold payout. In addition to the gold, they also receive 500 experience points regardless.</p></li>
+<li><p>The player wins 4 games. This progresses the daily wins count by 4, which rewards 550 gold, and if the weekly wins count has not reached 15 yet, they receive an additional 250 experience points per win. Any wins beyond this have substantially diminishing returns and are an unrealistic amount of daily play for the average player.</p></li>
+<li><p>The player then checks if the experience points that they have earned results in their mastery pass leveling up. The mastery pass is Arena’s version of a battle pass and consists of 2 tracks: the free track (which rewards a pack of the current set approximately every other level) and the paid track (which rewards small amounts of gold, gems, and various packs across sets each level).</p></li>
+<li><p>If the player has earned enough gold or gems to make a purchase, they will determine and then open the optimal pack<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a> to progress on deck completion.</p></li>
+<li><p>If the vault (a reward that pays back for opening duplicate cards) is complete, the player will open it.</p></li>
+<li><p>The player will check if it has completed any of the decks it is working towards. If so, it will end its loop and record which deck was completed, otherwise, it will repeat the loop for the next day.</p></li>
+</ol>
+</section>
+<section id="defining-completion" class="level3">
+<h3 class="anchored" data-anchor-id="defining-completion">Defining Completion</h3>
+<p>Each player is given the 10 best decks in the meta game<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a> to work towards. In addition to earning card, player can also earn wildcards which can be crafted into any card of a given rarity, so a player was defined to have completed their simulation once at least one of the decks is fully craftable. By allowing the use of wildcards, the need to randomly get exactly the right cards was alleviated and it gave an inevitability of completion as a player could in theory just earn enough wildcards to craft an entire deck.</p>
+</section>
+</section>
+<section id="what-si-the-best-method-to-earn-cards" class="level2">
+<h2 class="anchored" data-anchor-id="what-si-the-best-method-to-earn-cards">What si the Best Method to Earn Cards?</h2>
+<section id="normal-packs" class="level3">
+<h3 class="anchored" data-anchor-id="normal-packs">Normal Packs</h3>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-day_norm" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-day_norm-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="mtga_report_files/figure-html/fig-day_norm-1.png" class="img-fluid figure-img" width="768">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-day_norm-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Number of days to complete a deck when opening normal packs
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-pack_norm" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-pack_norm-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="mtga_report_files/figure-html/fig-pack_norm-1.png" class="img-fluid figure-img" width="768">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-pack_norm-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: Number of packs to complete a deck when opening normal packs
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Across all 4 profiles, the average number of days to complete a deck was 32.1 and the average number of packs was 121.55. For both standard and pioneer, Bo1 required less days and less packs to complete on average than Bo3, which makes intuitive since there are less cards for these decks.</p>
+<p>As far as the comparison between standard and pioneer, their average number of days were similar in both Bo1 and Bo3. The standard deviation of standard was consist between Bo1 and Bo3 (approximately 6.4), while there was a noticeable difference in standard deviation between Bo1 and Bo3 for pioneer (apprxoimately 4.1 for Bo1 but only 1.6 for Bo3).</p>
+<p>The distributions for both types of standard and pioneer Bo1 are also skewed left (this is true for both days and packs since they are a rough proxy for each other). This is the result of very fortunate pack openings that gave the exact cards that were needed for the decks. On the other hand, there is unlikely to be exceptionally high outliers due to the fact that there is the aforementioned inevitability of completion through the wild cards.</p>
+</section>
+<section id="mythic-packs" class="level3">
+<h3 class="anchored" data-anchor-id="mythic-packs">Mythic Packs</h3>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-day_mythic" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-day_mythic-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="mtga_report_files/figure-html/fig-day_mythic-1.png" class="img-fluid figure-img" width="768">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-day_mythic-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3: Number of days to complete a deck when opening mythic packs
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-pack_mythic" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-pack_mythic-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="mtga_report_files/figure-html/fig-pack_mythic-1.png" class="img-fluid figure-img" width="768">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-pack_mythic-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4: Number of packs to complete a deck when opening mythic packs
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Across all 4 profiles, the average number of days to complete a deck was 38.33 and the average number of packs was 121.14. Similar to the normal packs (and following the same logic), for both standard and pioneer, Bo1 required less days and less packs to complete on average than Bo3.</p>
+<p>When comparing between standard and pioneer, the standard deviations were more varied than in the normal pack case. The lower 2 were both pioneer with Bo3 being approximately 1.6)and Bo1 being 5), while the higher two were both standard with 6.8 for Bo3 and 8.2 for Bo1.</p>
+<p>Unlike in the normal pack case, the pioneer Bo1 distribution looks much closer to being normally distributed; however the distributions for both standard Bo1 and Bo3 still are skewed to the left.</p>
+</section>
+<section id="which-is-better" class="level3">
+<h3 class="anchored" data-anchor-id="which-is-better">Which is better?</h3>
+<p>To determine which methodology is best for completing a deck, we can run a Welch’s t-test for each of the formats.</p>
+<div class="cell">
+<div id="fig-pack_test_days" class="cell-output-display quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-pack_test_days-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+player_type
+</th>
+<th style="text-align:right;">
+p_value
+</th>
+<th style="text-align:right;">
+normal_mean
+</th>
+<th style="text-align:right;">
+mythic_mean
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Bo1 Standard
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+26.02
+</td>
+<td style="text-align:right;">
+32.16
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Bo3 Standard
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+36.56
+</td>
+<td style="text-align:right;">
+41.76
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Bo1 Pioneer
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+28.74
+</td>
+<td style="text-align:right;">
+35.62
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Bo3 Pioneer
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+37.08
+</td>
+<td style="text-align:right;">
+43.78
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-pack_test_days-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5: P values of t-test comparing mean number of days for normal packs to mythic packs
+</figcaption>
+</figure>
+</div>
+</div>
+<p>In regards to number of days, when comparing the two types of packs, across all formats, the normal packs are better than the mythic packs as the lower number of days is statistically significant with a p-value of 0.</p>
+<div class="cell">
+<div id="fig-pack_test_packs" class="cell-output-display quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-pack_test_packs-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+player_type
+</th>
+<th style="text-align:right;">
+p_value
+</th>
+<th style="text-align:right;">
+normal_mean
+</th>
+<th style="text-align:right;">
+mythic_mean
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Bo1 Standard
+</td>
+<td style="text-align:right;">
+0.581
+</td>
+<td style="text-align:right;">
+110.88
+</td>
+<td style="text-align:right;">
+112.18
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Bo3 Standard
+</td>
+<td style="text-align:right;">
+0.113
+</td>
+<td style="text-align:right;">
+129.28
+</td>
+<td style="text-align:right;">
+125.98
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Bo1 Pioneer
+</td>
+<td style="text-align:right;">
+0.344
+</td>
+<td style="text-align:right;">
+115.76
+</td>
+<td style="text-align:right;">
+117.16
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Bo3 Pioneer
+</td>
+<td style="text-align:right;">
+0.061
+</td>
+<td style="text-align:right;">
+130.28
+</td>
+<td style="text-align:right;">
+129.24
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-pack_test_packs-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6: P values of t-test comparing mean number of packs for normal packs to mythic packs
+</figcaption>
+</figure>
+</div>
+</div>
+<p>However, when comparing the number of packs, there is no longer a statistically significant different between normal and mythic packs. This means that completing a deck requires roughly the same number of packs, so what becomes more important is the speed at which you can acquire packs. Therefore, the cheaper price of the normal packs (1000 gold vs 1300 gold) gives the normal packs an advantage at completing a deck faster.</p>
+<p>Another implication of the number of needed packs being the same between normal and mythic packs is that it implies that wild cards (which are earned by opening a certain number of packs) are more important. Of the wild cards, the rare wild cards are by far the most valuable as this is the most common bottleneck when building decks (due to their high demand and low supply). The average number of rare wild cards earned by opening normal packs was 20.26 while the average number of rare wild cards earned by opening mythic packs was 20.19. These values are nearly identical, and thus further support the idea that the number of packs opened matters most.</p>
+<p>This dependency on wild cards is also reflected in the specific decks that were completed. Mono-Red-Aggro was always the completed deck for standard and nearly always the completed deck for pioneer<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a>. This archetype is almost always one of the cheapest decks in a format, and thus also usually the one with the lowest number of cards with high rarities. This is especially apparent in the mana-base (where many decks inflate their rare count) since they are running about 15 basic lands. This means that 20-25% of the deck is immediately complete without any further effort.</p>
+</section>
+</section>
+<section id="should-you-spend-money" class="level2">
+<h2 class="anchored" data-anchor-id="should-you-spend-money">Should You Spend Money?</h2>
+<section id="budget" class="level3">
+<h3 class="anchored" data-anchor-id="budget">$5 Budget</h3>
+<p>For $5, new players can buy the welcome bundle which includes 5 Foundations packs and 2500 gems. This allows a player to immediately open an extra 17 packs which results in many cards, and more importantly, 3 immediate rare wild cards.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-day_money_5" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-day_money_5-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="mtga_report_files/figure-html/fig-day_money_5-1.png" class="img-fluid figure-img" width="768">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-day_money_5-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;7: Number of days to complete a deck after purchasing the Welcome Bundle. The red line note the mean number of days without a purchase
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-packs_money_5" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-packs_money_5-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="mtga_report_files/figure-html/fig-packs_money_5-1.png" class="img-fluid figure-img" width="768">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-packs_money_5-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;8: Number of packs to complete a deck after purchasing the Welcome Bundle. The red line note the mean number of packs without a purchase
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>With a simple visual analysis, there is a clear decrease in the number of days required to complete a deck upon purchasing the Welcome Bundle, and a t-test confirms this. Once again, the number of packs appears to be unchanged for the same reasons as highlighted above.</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table caption-top table-sm table-striped small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">player_type</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">p_value</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">normal_mean</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">purchase_5_mean</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Bo1 Standard</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">26.02</td>
+<td style="text-align: right;">15.48</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Bo3 Standard</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">36.56</td>
+<td style="text-align: right;">29.28</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Bo1 Pioneer</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">28.74</td>
+<td style="text-align: right;">22.14</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Bo3 Pioneer</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">37.08</td>
+<td style="text-align: right;">30.52</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+<p>With this difference in mind, the question of if the Welcome Bundle is worth it comes down to the whether saving an average of 8 days (or about 24 % of the total time) is worth the $5.</p>
+</section>
+<section id="budget-1" class="level3">
+<h3 class="anchored" data-anchor-id="budget-1">$15 Budget</h3>
+<p>For $15, a player can also buy the Adventurer Bundle which gives 2 cosmetics plus 3500 gems. Importantly, 3500 gems gives a player enough to buy the mastery pass. Common wisdom within the community is that the master pass is one of the most cost effective purchases that a player can make, so in this simulation, it was assumed that the player would always buy the mastery pass.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-day_money_15" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-day_money_15-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="mtga_report_files/figure-html/fig-day_money_15-1.png" class="img-fluid figure-img" width="768">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-day_money_15-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;9: Number of days to complete a deck after purchasing the Adventurer Bundle. The red line note the mean number of days without a purchase
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Although not as striking in the graphs, the t-test once again confirms that there is a statistically significant decrease in the number of days that are required to complete a deck.</p>
+<div class="cell">
+<div id="fig-money15_test_days" class="cell-output-display quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-money15_test_days-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+player_type
+</th>
+<th style="text-align:right;">
+p_value
+</th>
+<th style="text-align:right;">
+normal_mean
+</th>
+<th style="text-align:right;">
+purchase_15_mean
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Bo1 Standard
+</td>
+<td style="text-align:right;">
+0.001
+</td>
+<td style="text-align:right;">
+26.02
+</td>
+<td style="text-align:right;">
+22.08
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Bo3 Standard
+</td>
+<td style="text-align:right;">
+0.000
+</td>
+<td style="text-align:right;">
+36.56
+</td>
+<td style="text-align:right;">
+29.06
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Bo1 Pioneer
+</td>
+<td style="text-align:right;">
+0.000
+</td>
+<td style="text-align:right;">
+28.74
+</td>
+<td style="text-align:right;">
+22.92
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Bo3 Pioneer
+</td>
+<td style="text-align:right;">
+0.000
+</td>
+<td style="text-align:right;">
+37.08
+</td>
+<td style="text-align:right;">
+30.04
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-money15_test_days-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;10: P values of t-test comparing mean number of days for no purcahse and $15 purchase
+</figcaption>
+</figure>
+</div>
+</div>
+<p>The decrease in the number of days is only 6, which is less that the decrease resulting from the $5 purchase. This means that in order for the $15 purchase to be worth it, the other rewards from the bundle and mastery pass (cosmetics, draft tokens, etc.), must be worth more than the extra $10 of the purchase and the extra 2 days of working towards a deck as compared to the $5 bundle.</p>
+</section>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>Overall, this monte carlo analysis helped emphasize existing common knowledge that I had encountered. The general sentiment in the community that was reinforced by this analysis included the following:</p>
+<ul>
+<li><p>Mythic packs are worse than normal packs for earning cards and building decks</p></li>
+<li><p>Mono-Red-Aggro or a similar competitive but inexpensive deck are the best for new players to attain quickly as they are the more accessible.</p></li>
+<li><p>The two bundles offered to new players have very high value, and more generally, spending money on the game can significantly speed up the speed at which you can build a deck</p></li>
+</ul>
+</section>
+<section id="limitations" class="level2">
+<h2 class="anchored" data-anchor-id="limitations">Limitations</h2>
+<p>There are a few major limitations to this analysis. First and foremost is that this analysis is specific to MTG Arena. The online, live service game model is very difference than the real money or near real money economies of playing with real cards or playing on MTG Online. These achievements are only possible because of the free gold that is given out for daily wins and quests. In addition to the currency being different between platforms, the mechanisms by which you acquire cards is quite different. Rather than wasting time opening packs and hoping for the right cards or just saving up wild cards, the other platforms allow you to just buy cards directly with real money. In some ways this increases accessibility because it greatly reduces the barrier of time, but in other ways it reduces accessibility as it removes the option to play for free.</p>
+<p>The second source of limitations of this analysis comes from the small simplifications and assumptions that I made. For example, the duplicate card protection is actually slightly more complicated than I made it as it can sometimes give out a refund of gems (but this only occurs when you have every rare or every mythic of a set, so it was unlikely to matter for my simulations). I also didn’t include rank rewards. Every month, a player can get some gold and a few packs for achieving a certain rank. This also doesn’t really matter as the rewards are minimal and many of the simulated players didn’t even need to play for a full month. And one final simplification that I made was in regard to the daily rewards. An assumption of 4 wins per day may be too high or too low for some players depending on time and some players may not play every day. Also, the assumption of only rerolling quests once is technically suboptimal as players who reroll a quest into another 500 gold one can just wait until the next day to reroll it again. In theory, the perfect strategy would be to only ever complete quests if they are 750 gold and just wait to reroll all others.</p>
+</section>
+
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>All code can be found in the github repository here:<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>The optimal pack to open is determined by finding the pack with the maximum score which is calculated by summing the value of each card in the pack using the following formula:</p>
+<p>max copies needed * rarity factor * highest percentage completion of a deck using the card * (1 + 1/2 * (number of decks using the card - 1 ))<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3"><p>Deck lists were gathered from MTG Goldfish on 5/12 so they reflect the metagame approximately 1 month after the release of Tarkir: Dragonstorm.<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4"><p>There was one instance for pioneer Bo1 where Rakdos Prowess was the completed deck; however, these decks are quite similar to each other in both the cards that are run and the distribution of card rarities<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section></div></main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
