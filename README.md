@@ -22,6 +22,8 @@ Player simulations were implemented in Python. Each player was represented as an
 
 The results were analyzed in R, using Quarto for clean and integrated reporting. Quarto made it easy to combine narrative, tables, and visualizations in a cohesive format.
 
+You can view the report [online](https://leona5139.github.io/mtg-monte-carlo/mtga_report.html).
+
 ## Data Sources
 
 - Decklists were sourced from [MTG Goldfish](https://www.mtggoldfish.com)
