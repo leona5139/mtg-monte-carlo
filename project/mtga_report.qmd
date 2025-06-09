@@ -83,7 +83,7 @@ Each player is given the 10 best decks in the meta game[^3] to work towards. In 
 
 [^3]: Deck lists were gathered from MTG Goldfish on 5/12 so they reflect the metagame approximately 1 month after the release of Tarkir: Dragonstorm.
 
-## What si the Best Method to Earn Cards?
+## What is the Best Method to Earn Cards?
 
 ### Normal Packs
 
